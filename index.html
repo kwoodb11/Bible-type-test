@@ -1,3 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scripture Typing Practice</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .stat-card {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #4f46e5;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+        
+        .practice-area {
+            padding: 40px;
+        }
+        
+        .text-display {
+            background: #f1f5f9;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            font-size: 1.2rem;
+            line-height: 1.8;
+            border: 2px solid #e2e8f0;
+            min-height: 120px;
+        }
+        
+        .text-display .correct {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+        
+        .text-display .incorrect {
+            background-color: #fecaca;
+            color: #dc2626;
+        }
+        
+        .text-display .current {
+            background-color: #dbeafe;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .input-area {
+            position: relative;
+        }
+        
+        .typing-input {
+            width: 100%;
+            padding: 20px;
+            font-size: 1.1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            resize: none;
+            min-height: 120px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .typing-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .btn-primary {
+            background: #4f46e5;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #4338ca;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+        
+        .verse-reference {
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 600;
+            color: #4f46e5;
+            font-size: 1.1rem;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4f46e5, #7c3aed);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .scripture-counter {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📖 Scripture Typing Practice</h1>
+            <p>Improve your typing skills with Bible truths</p>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="wpm">0</div>
+                <div class="stat-label">WPM</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="accuracy">100%</div>
+                <div class="stat-label">Accuracy</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="progress">0%</div>
+                <div class="stat-label">Progress</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="timer">0:00</div>
+                <div class="stat-label">Time</div>
+            </div>
+        </div>
+        
+        <div class="practice-area">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+            
+            <div class="scripture-counter" id="scriptureCounter">Story 1 of 15</div>
+            <div class="verse-reference" id="verseRef">Creation Story</div>
+            
+            <div class="text-display" id="textDisplay">
+                In the beginning, God created the heavens and the earth. The earth had no shape and was empty. Darkness covered the deep waters. Then God said, 'Let there be light,' and there was light. God saw that the light was good. He separated the light from the darkness. God called the light day and the darkness night. This was the first day.
+            </div>
+            
+            <div class="input-area">
+                <textarea 
+                    class="typing-input" 
+                    id="typingInput" 
+                    placeholder="Start typing the text above..."
+                    disabled
+                ></textarea>
+            </div>
+            
+            <div class="controls">
+                <button class="btn btn-primary" id="startBtn">Start Practice</button>
+                <button class="btn btn-secondary" id="newTextBtn">New Text</button>
+                <button class="btn btn-secondary" id="resetBtn">Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class TypingPractice {
+            constructor() {
+
 this.texts = [
                     {
                         reference: "God Begins to Make Things",
@@ -112,3 +377,199 @@ this.texts = [
                         text: "Moses grew up in Pharaoh's palace, but he knew he was really an Israelite. When Moses was forty years old, he saw an Egyptian beating an Israelite slave. Moses killed the Egyptian and buried him in the sand. The next day Moses tried to stop two Israelites from fighting. One of them said, 'Are you going to kill me like you killed the Egyptian?' Moses realized that people knew what he had done. When Pharaoh heard about it, he wanted to kill Moses. So Moses ran away to a land called Midian. There he became a shepherd and got married."
                     }
                 ];
+
+                ];
+                
+                this.currentTextIndex = 0;
+                this.currentText = this.texts[0].text;
+                this.userInput = '';
+                this.startTime = null;
+                this.isActive = false;
+                this.errors = 0;
+                this.timerInterval = null;
+                
+                this.initElements();
+                this.bindEvents();
+                this.displayText();
+            }
+            
+            initElements() {
+                this.textDisplay = document.getElementById('textDisplay');
+                this.typingInput = document.getElementById('typingInput');
+                this.startBtn = document.getElementById('startBtn');
+                this.newTextBtn = document.getElementById('newTextBtn');
+                this.resetBtn = document.getElementById('resetBtn');
+                this.verseRef = document.getElementById('verseRef');
+                this.scriptureCounter = document.getElementById('scriptureCounter');
+                this.wpmDisplay = document.getElementById('wpm');
+                this.accuracyDisplay = document.getElementById('accuracy');
+                this.progressDisplay = document.getElementById('progress');
+                this.timerDisplay = document.getElementById('timer');
+                this.progressBar = document.getElementById('progressBar');
+            }
+            
+            bindEvents() {
+                this.startBtn.addEventListener('click', () => this.startPractice());
+                this.newTextBtn.addEventListener('click', () => this.loadNewText());
+                this.resetBtn.addEventListener('click', () => this.reset());
+                this.typingInput.addEventListener('input', (e) => this.handleInput(e));
+                this.typingInput.addEventListener('keydown', (e) => this.handleKeydown(e));
+            }
+            
+            startPractice() {
+                this.isActive = true;
+                this.startTime = Date.now();
+                this.typingInput.disabled = false;
+                this.typingInput.focus();
+                this.startBtn.textContent = 'Practicing...';
+                this.startBtn.disabled = true;
+                this.startTimer();
+            }
+            
+            startTimer() {
+                this.timerInterval = setInterval(() => {
+                    if (this.startTime) {
+                        const elapsed = Math.floor((Date.now() - this.startTime) / 1000);
+                        const minutes = Math.floor(elapsed / 60);
+                        const seconds = elapsed % 60;
+                        this.timerDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    }
+                }, 1000);
+            }
+            
+            handleInput(e) {
+                if (!this.isActive) return;
+                
+                this.userInput = e.target.value;
+                this.updateDisplay();
+                this.updateStats();
+                
+                if (this.userInput === this.currentText) {
+                    this.completePractice();
+                }
+            }
+            
+            handleKeydown(e) {
+                if (!this.isActive) return;
+                
+                // Prevent backspace beyond current position to maintain accuracy
+                if (e.key === 'Backspace' && this.userInput.length === 0) {
+                    e.preventDefault();
+                }
+            }
+            
+            updateDisplay() {
+                let displayHTML = '';
+                const textChars = this.currentText.split('');
+                const inputChars = this.userInput.split('');
+                
+                for (let i = 0; i < textChars.length; i++) {
+                    const char = textChars[i];
+                    
+                    if (i < inputChars.length) {
+                        if (inputChars[i] === char) {
+                            displayHTML += `<span class="correct">${char}</span>`;
+                        } else {
+                            displayHTML += `<span class="incorrect">${char}</span>`;
+                        }
+                    } else if (i === inputChars.length) {
+                        displayHTML += `<span class="current">${char}</span>`;
+                    } else {
+                        displayHTML += char;
+                    }
+                }
+                
+                this.textDisplay.innerHTML = displayHTML;
+            }
+            
+            updateStats() {
+                // Calculate WPM
+                const timeElapsed = (Date.now() - this.startTime) / 1000 / 60; // in minutes
+                const wordsTyped = this.userInput.trim().split(' ').length;
+                const wpm = timeElapsed > 0 ? Math.round(wordsTyped / timeElapsed) : 0;
+                this.wpmDisplay.textContent = wpm;
+                
+                // Calculate accuracy
+                let correctChars = 0;
+                const inputChars = this.userInput.split('');
+                const textChars = this.currentText.split('');
+                
+                for (let i = 0; i < inputChars.length; i++) {
+                    if (inputChars[i] === textChars[i]) {
+                        correctChars++;
+                    }
+                }
+                
+                const accuracy = inputChars.length > 0 ? Math.round((correctChars / inputChars.length) * 100) : 100;
+                this.accuracyDisplay.textContent = `${accuracy}%`;
+                
+                // Calculate progress
+                const progress = Math.round((this.userInput.length / this.currentText.length) * 100);
+                this.progressDisplay.textContent = `${progress}%`;
+                this.progressBar.style.width = `${progress}%`;
+            }
+            
+            completePractice() {
+                this.isActive = false;
+                this.typingInput.disabled = true;
+                this.startBtn.textContent = 'Completed! 🎉';
+                this.startBtn.style.background = '#10b981';
+                clearInterval(this.timerInterval);
+                
+                // Show completion message
+                setTimeout(() => {
+                    alert('Great job! You completed the typing practice. Click "New Text" to try another Bible story.');
+                }, 500);
+            }
+            
+            loadNewText() {
+                this.currentTextIndex = (this.currentTextIndex + 1) % this.texts.length;
+                const selectedText = this.texts[this.currentTextIndex];
+                this.currentText = selectedText.text;
+                this.verseRef.textContent = selectedText.reference;
+                this.scriptureCounter.textContent = `Story ${this.currentTextIndex + 1} of ${this.texts.length}`;
+                this.reset();
+                this.displayText();
+            }
+            
+            displayText() {
+                this.textDisplay.textContent = this.currentText;
+                this.verseRef.textContent = this.texts[this.currentTextIndex].reference;
+                this.scriptureCounter.textContent = `Story ${this.currentTextIndex + 1} of ${this.texts.length}`;
+            }
+            
+            reset() {
+                this.isActive = false;
+                this.userInput = '';
+                this.startTime = null;
+                this.errors = 0;
+                this.typingInput.value = '';
+                this.typingInput.disabled = true;
+                this.startBtn.textContent = 'Start Practice';
+                this.startBtn.disabled = false;
+                this.startBtn.style.background = '#4f46e5';
+                
+                // Reset stats
+                this.wpmDisplay.textContent = '0';
+                this.accuracyDisplay.textContent = '100%';
+                this.progressDisplay.textContent = '0%';
+                this.timerDisplay.textContent = '0:00';
+                this.progressBar.style.width = '0%';
+                
+                // Clear timer
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                    this.timerInterval = null;
+                }
+                
+                this.displayText();
+            }
+        }
+        
+        // Initialize the typing practice app
+        document.addEventListener('DOMContentLoaded', () => {
+            new TypingPractice();
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97849e12c13ae7ed',t:'MTc1NjcyODEzMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
